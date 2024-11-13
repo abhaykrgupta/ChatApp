@@ -6,13 +6,27 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import apiClient from "@/lib/api-client";
-import { SIGNUP_ROUTE } from "@/utils/constants.js";
+import { LOGIN_ROUTE, SIGNUP_ROUTE } from "@/utils/constants.js";
+import { useNavigate } from "react-router-dom";
 
 const Auth = () => {
+  const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
 
+  //validatelogin
+  const validatelogin = async () => {
+    if (!email.length) {
+      toast.error("Email is Required");
+      return false;
+    }
+    if (!password.length) {
+      toast.error("Password is Required");
+      return false;
+    }
+    return true;
+  };
   //validationsgnup
   const validatesignup = () => {
     if (!email.length) {
@@ -30,19 +44,37 @@ const Auth = () => {
     return true;
   };
 
-  const handleLogin = async () => {};
-
+  const handleLogin = async () => {
+    if (validatelogin()) {
+      try {
+        const response = await apiClient.post(LOGIN_ROUTE, { email, password }, { withCredentials: true });
+       
+        if (response.data.user.id) {
+          if(response.data.user.profilesetup) navigate("/chat");
+          else navigate("/profile")
+        }
+      } catch (error) {
+        toast.error("Login failed. Please check your credentials.");
+      }
+    }
+  };
+  
   const handleSignup = async () => {
-   if (validatesignup()) {
-     try {
-      const response = await apiClient.post(SIGNUP_ROUTE, { email, password });
-      console.log({ response }); 
-    } catch(error) {
-      toast.error("Signup failed. Please try again.");
-     }
-  alert("done")
- };
+    if (validatesignup()) {
+      try {
+        const response = await apiClient.post(
+          SIGNUP_ROUTE,
+          { email, password },
+          { withCredentials: true } // true then we will able to receve jwt cookie
+        );
+if (response ===201) {
+  navigate("/profile")
 }
+      } catch (error) {
+        toast.error("Signup failed. Please try again.");
+      }
+    }
+  };
 
   return (
     <div className="h-[100vh] w-[100vw] flex items-center justify-center">
@@ -58,7 +90,7 @@ const Auth = () => {
             </p>
           </div>
           <div className="flex justify-center items-center w-full">
-            <Tabs className="w-3/4">
+            <Tabs className="w-3/4" defaultValue="login">
               <TabsList className="bg-transparent rounded-none w-full">
                 <TabsTrigger
                   className="data-[state=active]:bg-transparent text-black text-opacity-90
@@ -71,7 +103,6 @@ const Auth = () => {
                   value="signup"
                   className="data-[state=active]:bg-transparent text-black text-opacity-90
                   border-b-2 rounded-none w-full data-[state=active]:text-black data-[state=active]:font-semibold data-[state=active]:border-b-purple-500 p-3 transition-all duration-300"
-                  
                 >
                   Signup
                 </TabsTrigger>
@@ -87,7 +118,7 @@ const Auth = () => {
                   type="password"
                   placeholder="Password"
                   className="rounded-full p-6"
-                  onChange={(e) => setEmail(e.target.value)}
+                  onChange={(e) => setPassword(e.target.value)}
                 />
                 <Button className="rounded-full p-6" onClick={handleLogin}>
                   Login
