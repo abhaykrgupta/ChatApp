@@ -1,5 +1,5 @@
-import mongoose, { models } from "mongoose";
-import {gensalt , hash} from "bcrypt"
+import mongoose from "mongoose";
+import {genSalt , hash} from "bcrypt"
 
 const userSchema = new mongoose.Schema({
   email: {

@@ -1,25 +1,55 @@
 import React, { useState } from "react";
 import victory from "@/assets/victory.svg";
-import Background from "@/assets/login2.png"
+import Background from "@/assets/login2.png";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
+import apiClient from "@/lib/api-client";
+import { SIGNUP_ROUTE } from "@/utils/constants.js";
 
 const Auth = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [confirmpassword, setConfirmPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+
+  //validationsgnup
+  const validatesignup = () => {
+    if (!email.length) {
+      toast.error("Email is Required");
+      return false;
+    }
+    if (!password.length) {
+      toast.error("Password is Required");
+      return false;
+    }
+    if (password !== confirmPassword) {
+      toast.error("Password and Confirmend Password should be same.");
+      return false;
+    }
+    return true;
+  };
 
   const handleLogin = async () => {};
 
-  const handleSignup = async () => {};
+  const handleSignup = async () => {
+   if (validatesignup()) {
+     try {
+      const response = await apiClient.post(SIGNUP_ROUTE, { email, password });
+      console.log({ response }); 
+    } catch(error) {
+      toast.error("Signup failed. Please try again.");
+     }
+  alert("done")
+ };
+}
 
   return (
     <div className="h-[100vh] w-[100vw] flex items-center justify-center">
       <div className="h-[80vh] bg-white border-2 border-white shadow-2xl text-opacity-90 w-[80vw] md:w-[0vw] lg:w-[70vw] xl:w-[60vw] rounded-3xl grid xl:grid-cols-2">
         <div className="flex flex-col gap-10 items-center justify-center">
           <div className="flex items-center justify-center flex-col">
-            <div className="flex items-center justify-center">z
+            <div className="flex items-center justify-center">
               <h1 className="text-5xl font-bold md:text-6xl ">Welcome</h1>
               <img src={victory} alt="Victory Emoji" className="h-[100px]" />
             </div>
@@ -41,6 +71,7 @@ const Auth = () => {
                   value="signup"
                   className="data-[state=active]:bg-transparent text-black text-opacity-90
                   border-b-2 rounded-none w-full data-[state=active]:text-black data-[state=active]:font-semibold data-[state=active]:border-b-purple-500 p-3 transition-all duration-300"
+                  
                 >
                   Signup
                 </TabsTrigger>
@@ -50,36 +81,40 @@ const Auth = () => {
                   type="email"
                   placeholder="Email"
                   className="rounded-full p-6"
-                  onClick={(e) => setEmail(e.target.value)}
+                  onChange={(e) => setEmail(e.target.value)}
                 />
                 <Input
                   type="password"
                   placeholder="Password"
                   className="rounded-full p-6"
-                  onClick={(e) => setEmail(e.target.value)}
+                  onChange={(e) => setEmail(e.target.value)}
                 />
-                <Button className="rounded-full p-6" onClick={handleLogin}>Login</Button>
+                <Button className="rounded-full p-6" onClick={handleLogin}>
+                  Login
+                </Button>
               </TabsContent>
               <TabsContent className="flex flex-col gap-5" value="signup">
                 <Input
                   type="email"
                   placeholder="Email"
                   className="rounded-full p-6"
-                  onClick={(e) => setEmail(e.target.value)}
+                  onChange={(e) => setEmail(e.target.value)}
                 />
                 <Input
                   type="password"
                   placeholder="Password"
                   className="rounded-full p-6 "
-                  onClick={(e) => setConfirmPassword(e.target.value)}
+                  onChange={(e) => setPassword(e.target.value)}
                 />
                 <Input
                   type="password"
                   placeholder="Confirm Password"
                   className="rounded-full p-6 "
-                  onClick={(e) => setPassword(e.target.value)}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
                 />
-                 <Button className="rounded-full p-6 " onClick={handleSignup}>Signup</Button>
+                <Button className="rounded-full p-6 " onClick={handleSignup}>
+                  Signup
+                </Button>
               </TabsContent>
             </Tabs>
           </div>
