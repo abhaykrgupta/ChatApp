@@ -47,18 +47,22 @@ const Auth = () => {
   const handleLogin = async () => {
     if (validatelogin()) {
       try {
-        const response = await apiClient.post(LOGIN_ROUTE, { email, password }, { withCredentials: true });
-       
+        const response = await apiClient.post(
+          LOGIN_ROUTE,
+          { email, password },
+          { withCredentials: true }
+        );
+
         if (response.data.user.id) {
-          if(response.data.user.profilesetup) navigate("/chat");
-          else navigate("/profile")
+          if (response.data.user.profilesetup) navigate("/chat");
+          else navigate("/profile");
         }
       } catch (error) {
         toast.error("Login failed. Please check your credentials.");
       }
     }
   };
-  
+
   const handleSignup = async () => {
     if (validatesignup()) {
       try {
@@ -67,9 +71,9 @@ const Auth = () => {
           { email, password },
           { withCredentials: true } // true then we will able to receve jwt cookie
         );
-if (response ===201) {
-  navigate("/profile")
-}
+        if (response.status === 201) {
+          navigate("/profile");
+        }
       } catch (error) {
         toast.error("Signup failed. Please try again.");
       }
