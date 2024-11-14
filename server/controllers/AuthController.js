@@ -77,7 +77,7 @@ export const login = async (request, response, next) => {
     if (!user) {
       return response.status(400).send("user not found");
     }
-    const auth = await compare(password , user.password)
+    const auth = await compare(password, user.password);
     if (!auth) {
       return response.status(400).send("Password is incorrect");
     }
@@ -96,6 +96,32 @@ export const login = async (request, response, next) => {
         lastname: user.lastname,
         image: user.image,
       },
+    });
+  } catch (error) {
+    console.log({ error });
+    return response.status(500).send("internal Server Error");
+  }
+};
+
+export const getUserInfo = async (request, response, next) => {
+  try {
+
+    // console.log(request.userId);
+    const userData = await User.findById(request.userId);
+   if (!userData) {
+    return response.status(400).send("user with the given id is not found found");
+   }
+
+
+    return response.status(200).json({
+    
+        id: userData.id,
+        email: userData.email,
+        profileSetup: userData.profileSetup,
+        firstname: userData.firstname,
+        lastname: userData.lastname,
+        image: userData.image,
+ 
     });
   } catch (error) {
     console.log({ error });

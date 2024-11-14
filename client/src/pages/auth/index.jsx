@@ -8,9 +8,11 @@ import { toast } from "sonner";
 import apiClient from "@/lib/api-client";
 import { LOGIN_ROUTE, SIGNUP_ROUTE } from "@/utils/constants.js";
 import { useNavigate } from "react-router-dom";
+import { useAppStore } from "@/store";
 
 const Auth = () => {
   const navigate = useNavigate();
+  const {setUserInfo} = useAppStore();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -54,6 +56,7 @@ const Auth = () => {
         );
 
         if (response.data.user.id) {
+          setUserInfo(response.data.user)
           if (response.data.user.profilesetup) navigate("/chat");
           else navigate("/profile");
         }
@@ -72,6 +75,7 @@ const Auth = () => {
           { withCredentials: true } // true then we will able to receve jwt cookie
         );
         if (response.status === 201) {
+          setUserInfo(response.data.user)  // to show the user data
           navigate("/profile");
         }
       } catch (error) {
