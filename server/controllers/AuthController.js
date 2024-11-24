@@ -64,7 +64,7 @@ export const signup = async (request, response, next) => {
       the parameters email and userId, respectively.
 */
 }
-
+// login
 export const login = async (request, response, next) => {
   try {
     const { email, password } = request.body;
@@ -103,25 +103,58 @@ export const login = async (request, response, next) => {
   }
 };
 
+//userinfo
 export const getUserInfo = async (request, response, next) => {
   try {
-
     // console.log(request.userId);
     const userData = await User.findById(request.userId);
-   if (!userData) {
-    return response.status(400).send("user with the given id is not found found");
-   }
-
+    if (!userData) {
+      return response
+        .status(400)
+        .send("user with the given id is not found found");
+    }
 
     return response.status(200).json({
-    
-        id: userData.id,
-        email: userData.email,
-        profileSetup: userData.profileSetup,
-        firstname: userData.firstname,
-        lastname: userData.lastname,
-        image: userData.image,
+      id: userData.id,
+      email: userData.email,
+      profileSetup: userData.profileSetup,
+      firstname: userData.firstname,
+      lastname: userData.lastname,
+      image: userData.image,
+    });
+  } catch (error) {
+    console.log({ error });
+    return response.status(500).send("internal Server Error");
+  }
+};
+
+//userinfo
+export const updateProfile = async (request, response, next) => {
+  try {
+    const { userId } = request;
+    const { firstname, lastname } = request.body;
+    if (!firstname || !lastname) {
+      return response.status(400).send("First name and last name is required.");
+    }
  
+    //update the mongodb with new data
+    const userData = await User.findByIdAndUpdate(
+      userId,
+      {
+        firstname,
+        lastname,
+        profileSetup: true
+      },
+      {new: true , runValidators: true} // new will tell mongodb to return new data to send to the frontend //validators is true means it validtae our data its true or not 
+    )
+
+    return response.status(200).json({
+      id: userData.id,
+      email: userData.email,
+      profileSetup: userData.profileSetup,
+      firstname: userData.firstname,
+      lastname: userData.lastname,
+      image: userData.image,
     });
   } catch (error) {
     console.log({ error });

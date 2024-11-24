@@ -7,6 +7,7 @@ import { colors, getColor } from "@/lib/utils";
 import { FaTrash, FaPlus } from "react-icons/fa";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
 
 const Profile = () => {
   const navigate = useNavigate();
@@ -16,6 +17,26 @@ const Profile = () => {
   const [image, setImage] = useState();
   const [hovered, setHovered] = useState();
   const [selectedColor, setSelectedColor] = useState(0);
+
+  //validate profile
+  const validateProfile = () => {
+    if (!firstName) {
+      toast.error("First Name is required.");
+      return false;
+    }
+    if (!lastName) {
+      toast.error("Last Name is required.");
+      return false;
+    }
+    return true;
+  };
+
+  //save changes api with backend
+  const savedChanged = async () => {
+    if (validateProfile()) {
+      alert("Success");
+    }
+  };
 
   return (
     <div className="bg-[#121318] h-[100vh] flex items-center justify-center flex-col gap-10">
@@ -51,12 +72,11 @@ const Profile = () => {
             {/* Delete or edit option inside this profile ** hovered overly */}
             {hovered && (
               <div className="absolute inset-0 flex justify-center items-center  bg-black/50 ring-fuchsia-50 rounded-full  ">
-               {image ? (
+                {image ? (
                   <FaTrash className="text-white text-3xl cursor-pointer" />
                 ) : (
                   <FaPlus className="text-white text-3xl cursor-pointer" />
                 )}
-              
               </div>
             )}
           </div>
@@ -106,7 +126,9 @@ const Profile = () => {
           </div>
         </div>
         <div className="w-full">
-          <Button className="h-12 w-full bg-purple-700 hover:bg-purple-900 transition-all duration-300">
+          <Button className="h-12 w-full bg-purple-700 hover:bg-purple-900 transition-all duration-300"
+          onClick={savedChanged}
+          >
             {" "}
             Save Changes{" "}
           </Button>
